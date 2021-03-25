@@ -7,21 +7,31 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-adguardhome
 PKG_VERSION:=1.8
-PKG_RELEASE:=12
-PKG_MAINTAINER:=<https://github.com/rufengsuixing/luci-app-adguardhome>
+PKG_RELEASE:=20200910
 
-LUCI_TITLE:=LuCI app for AdGuardHome
-LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+ca-certs +curl +wget-ssl +PACKAGE_$(PKG_NAME)_INCLUDE_binary:adguardhome
-LUCI_DESCRIPTION:=LuCI support for AdGuardHome
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
-define Package/$(PKG_NAME)/config
-config PACKAGE_$(PKG_NAME)_INCLUDE_binary
-	bool "Include Binary File"
-	default y
+include $(INCLUDE_DIR)/package.mk
+
+define Package/luci-app-adguardhome
+	SECTION:=luci
+	CATEGORY:=LuCI
+	SUBMENU:=3. Applications
+	TITLE:=LuCI app for adguardhome
+	PKG_MAINTAINER:=<https://github.com/rufengsuixing/luci-app-adguardhome>
+	PKGARCH:=all
+	DEPENDS:=+!wget&&!curl:wget
 endef
 
-PKG_CONFIG_DEPENDS:= CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_binary
+define Package/luci-app-adguardhome/description
+	LuCI support for adguardhome
+endef
+
+define Build/Prepare
+endef
+
+define Build/Compile
+endef
 
 define Package/luci-app-adguardhome/conffiles
 /usr/share/AdGuardHome/links.txt
@@ -29,8 +39,33 @@ define Package/luci-app-adguardhome/conffiles
 /etc/config/AdGuardHome.yaml
 endef
 
+define Package/luci-app-adguardhome/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
+	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
+
+	$(INSTALL_DIR)  $(1)/etc/uci-defaults
+	$(INSTALL_BIN)  ./root/etc/uci-defaults/* $(1)/etc/uci-defaults
+
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_BIN)  ./root/etc/config/AdGuardHome $(1)/etc/config
+/etc/config/AdGuardHome.yaml
+
+	$(INSTALL_DIR)  $(1)/etc/init.d
+	$(INSTALL_BIN)  ./root/etc/init.d/AdGuardHome $(1)/etc/init.d
+
+	$(INSTALL_DIR)   $(1)/usr/share/AdGuardHome
+	$(INSTALL_DATA)  ./root/usr/share/AdGuardHome/* $(1)/usr/share/AdGuardHome
+
+	$(INSTALL_DIR)   $(1)/usr/share/rpcd/acl.d/
+	$(INSTALL_DATA)  ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d
+
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	po2lmo ./po/zh-cn/AdGuardHome.po $(1)/usr/lib/lua/luci/i18n/AdGuardHome.zh-cn.lmo
+endef
+
 define Package/luci-app-adguardhome/postinst
 #!/bin/sh
+	chmod 755 /usr/share/AdGuardHome/*
 	/etc/init.d/AdGuardHome enable >/dev/null 2>&1
 	enable=$(uci get AdGuardHome.AdGuardHome.enabled 2>/dev/null)
 	if [ "$enable" == "1" ]; then
@@ -44,8 +79,8 @@ endef
 define Package/luci-app-adguardhome/prerm
 #!/bin/sh
 if [ -z "$${IPKG_INSTROOT}" ]; then
-     /etc/init.d/AdGuardHome disable
-     /etc/init.d/AdGuardHome stop
+	/etc/init.d/AdGuardHome disable
+	/etc/init.d/AdGuardHome stop
 uci -q batch <<-EOF >/dev/null 2>&1
 	delete ucitrack.@AdGuardHome[-1]
 	commit ucitrack
@@ -54,6 +89,4 @@ fi
 exit 0
 endef
 
-include $(TOPDIR)/feeds/luci/luci.mk
-
-# call BuildPackage - OpenWrt buildroot signature
+$(eval $(call BuildPackage,luci-app-adguardhome))

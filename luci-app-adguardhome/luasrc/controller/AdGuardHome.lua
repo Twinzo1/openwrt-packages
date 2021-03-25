@@ -14,11 +14,12 @@ entry({"admin", "services", "AdGuardHome", "getlog"}, call("get_log"))
 entry({"admin", "services", "AdGuardHome", "dodellog"}, call("do_dellog"))
 entry({"admin", "services", "AdGuardHome", "reloadconfig"}, call("reload_config"))
 entry({"admin", "services", "AdGuardHome", "gettemplateconfig"}, call("get_template_config"))
-end
+end 
 function get_template_config()
 	local b
 	local d=""
-	for cnt in io.lines("/tmp/resolv.conf.d/resolv.conf.auto") do
+	local RESCONF=uci:get_first("dhcp","dnsmasq","resolvfile") or "/tmp/resolv.conf.d/resolv.conf.auto"
+	for cnt in io.lines(RESCONF) do
 		b=string.match (cnt,"^[^#]*nameserver%s+([^%s]+)$")
 		if (b~=nil) then
 			d=d.."  - "..b.."\n"
