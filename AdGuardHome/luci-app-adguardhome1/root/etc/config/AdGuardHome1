@@ -1,0 +1,11 @@
+config AdGuardHome1 'AdGuardHome'
+	option enabled '0'
+	option httpport '3000'
+	option redirect 'none'
+	option configpath '/etc/AdGuardHome1.yaml'
+	option workdir '/usr/bin/AdGuardHome1'
+	option logfile '/tmp/AdGuardHome1.log'
+	option verbose '0'
+	option binpath '/usr/bin/AdGuardHome1/AdGuardHome'
+	option upxflag ''
+

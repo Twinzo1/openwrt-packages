@@ -1,0 +1,90 @@
+# Copyright (C) 2018-2019 Lienol
+#
+# This is free software, licensed under the Apache License, Version 2.0 .
+#
+
+include $(TOPDIR)/rules.mk
+
+PKG_NAME:=luci-app-adguardhome1
+PKG_VERSION:=1.8
+PKG_RELEASE:=20200909
+
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+
+include $(INCLUDE_DIR)/package.mk
+
+define Package/luci-app-adguardhome1
+	SECTION:=luci
+	CATEGORY:=LuCI
+	SUBMENU:=3. Applications
+	TITLE:=LuCI app for adguardhome1
+	PKG_MAINTAINER:=<https://github.com/rufengsuixing/luci-app-adguardhome1>
+	PKGARCH:=all
+	DEPENDS:=+!wget&&!curl:wget
+endef
+
+define Package/luci-app-adguardhome1/description
+	LuCI support for adguardhome1
+endef
+
+define Build/Prepare
+endef
+
+define Build/Compile
+endef
+
+define Package/luci-app-adguardhome1/conffiles
+/usr/share/AdGuardHome1/links.txt
+/etc/config/AdGuardHome1
+endef
+
+define Package/luci-app-adguardhome1/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
+	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
+
+	$(INSTALL_DIR)  $(1)/etc/uci-defaults
+	$(INSTALL_BIN)  ./root/etc/uci-defaults/* $(1)/etc/uci-defaults
+
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_BIN)  ./root/etc/config/AdGuardHome1 $(1)/etc/config
+
+	$(INSTALL_DIR)  $(1)/etc/init.d
+	$(INSTALL_BIN)  ./root/etc/init.d/AdGuardHome1 $(1)/etc/init.d
+
+	$(INSTALL_DIR)   $(1)/usr/share/AdGuardHome1
+	$(INSTALL_DATA)  ./root/usr/share/AdGuardHome1/* $(1)/usr/share/AdGuardHome1
+
+	$(INSTALL_DIR)   $(1)/usr/share/rpcd/acl.d/
+	$(INSTALL_DATA)  ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d
+
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	po2lmo ./po/zh-cn/AdGuardHome.po $(1)/usr/lib/lua/luci/i18n/AdGuardHome11.zh-cn.lmo
+endef
+
+define Package/luci-app-adguardhome1/postinst
+#!/bin/sh
+	chmod 755 /usr/share/AdGuardHome1/*
+	/etc/init.d/AdGuardHome1 enable >/dev/null 2>&1
+	enable=$(uci get AdGuardHome1.AdGuardHome.enabled 2>/dev/null)
+	if [ "$enable" == "1" ]; then
+		/etc/init.d/AdGuardHome1 reload
+	fi
+	rm -f /tmp/luci-indexcache
+	rm -f /tmp/luci-modulecache/*
+exit 0
+endef
+
+define Package/luci-app-adguardhome1/prerm
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	/etc/init.d/AdGuardHome1 disable
+	/etc/init.d/AdGuardHome1 stop
+uci -q batch <<-EOF >/dev/null 2>&1
+	delete ucitrack.@AdGuardHome1[-1]
+	commit ucitrack
+EOF
+fi
+exit 0
+endef
+
+$(eval $(call BuildPackage,luci-app-adguardhome1))
