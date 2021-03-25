@@ -143,7 +143,7 @@ jobs:
         rm -rf .svn
 
     - name: SSH connection to Actions
-      uses: Twinzo1/debugger-action@master
+      uses: garypang13/debugger-action@master
       if: 1 == 0
 
     - name: Modify
