@@ -40,10 +40,8 @@ jobs:
       run: |
         rm -rf `find -maxdepth 1 -type d -name "[!.]*" ! -path "./diy"`
         git rm -r --cache *
-        git clone --depth 1 https://github.com/Twinzo1/lede &
+        git clone --depth 1 https://github.com/Twinzo1/openwrt ./openwrt && cp -rf `ls ./openwrt | grep ".github" | grep "md"` ./ &
         git clone --depth 1 https://github.com/Twinzo1/serverchan &
-        git clone --depth 1 https://github.com/Twinzo1/AdGuardHome &
-        git clone --depth 1 https://github.com/Twinzo1/smartdns/tree/lede &
         
         git clone --depth 1 https://github.com/garypang13/luci-app-bypass &
         git clone --depth 1 https://github.com/garypang13/luci-app-bypass &
@@ -92,6 +90,10 @@ jobs:
         git clone --depth 1 https://github.com/fw876/helloworld && mv -n helloworld/* ./ ; rm -Rf helloworld &
         git clone --depth 1 https://github.com/linkease/ddnsto-openwrt && mv -n ddnsto-openwrt/* ./ ; rm -Rf ddnsto-openwrt &
 
+        svn co https://github.com/Twinzo1/AdGuardHome/trunk/luci-app-adguardhome &
+        svn co https://github.com/Twinzo1/AdGuardHome/trunk/luci-app-adguardhome1 &
+        svn co https://github.com/Twinzo1/smartdns/trunk/luci-app-smartdns &
+        svn co https://github.com/Twinzo1/smartdns/trunk/smartdns &
         svn co https://github.com/Lienol/openwrt/trunk/package/diy/luci-app-dockerman &
         svn co https://github.com/Lienol/openwrt-packages/trunk/net/https-dns-proxy &
         svn co https://github.com/NoTengoBattery/openwrt-mt7621/trunk/feeds/luci/applications/luci-app-compressed-memory &
@@ -141,7 +143,7 @@ jobs:
         rm -rf .svn
 
     - name: SSH connection to Actions
-      uses: garypang13/debugger-action@master
+      uses: Twinzo1/debugger-action@master
       if: 1 == 0
 
     - name: Modify
@@ -152,8 +154,6 @@ jobs:
         mv mt/drivers mt/mt-drivers
         cp -Rf mt/* ./ && rm -Rf mt
         sed -i "/minisign:minisign/d" luci-app-dnscrypt-proxy2/Makefile
-        sed -i 's/shadowsocksr-libev-alt/shadowsocksr-libev-ssr-redir/g' */Makefile
-        sed -i 's/shadowsocksr-libev-server/shadowsocksr-libev-ssr-server/g' */Makefile
         sed -i 's/+dockerd/+dockerd \\\n\t+cgroupfs-mount/' luci-app-dockerman/Makefile
         sed -i 's/+amule/+amule +antileech/' luci-app-amule/Makefile
         rm -f subconverter/patches/010-missing-header.patch
