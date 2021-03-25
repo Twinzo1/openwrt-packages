@@ -40,7 +40,7 @@ jobs:
       run: |
         rm -rf `find -maxdepth 1 -type d -name "[!.]*" ! -path "./diy"`
         git rm -r --cache *
-        (git clone --depth 1 https://github.com/Twinzo1/openwrt ./openwrt && cp -rf ./openwrt/`ls ./openwrt/ | grep ".github" | grep "md"` ./ && rm -rf ./openwrt)&
+        (git clone --depth 1 https://github.com/Twinzo1/openwrt ./openwrt && mv ./openwrt/* ./ && rm -rf ./openwrt)&
         git clone --depth 1 https://github.com/Twinzo1/serverchan &
         
         git clone --depth 1 https://github.com/garypang13/luci-app-bypass &
