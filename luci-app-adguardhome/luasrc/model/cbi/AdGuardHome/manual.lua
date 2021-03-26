@@ -8,8 +8,7 @@ require("table")
 function gen_template_config()
 	local b
 	local d=""
-	local RESCONF=uci:get_first("dhcp","dnsmasq","resolvfile") or "/tmp/resolv.conf.d/resolv.conf.auto"
-	for cnt in io.lines(RESCONF) do
+	for cnt in io.lines("/tmp/resolv.conf.d/resolv.conf.auto") do
 		b=string.match (cnt,"^[^#]*nameserver%s+([^%s]+)$")
 		if (b~=nil) then
 			d=d.."  - "..b.."\n"
@@ -32,7 +31,7 @@ function gen_template_config()
 	f:close()
 	return table.concat(tbl, "\n")
 end
-m = Map("AdGuardHome",translate('Needed to click "save&apply" to generate the configuration file'))
+m = Map("AdGuardHome")
 local configpath = uci:get("AdGuardHome","AdGuardHome","configpath")
 local binpath = uci:get("AdGuardHome","AdGuardHome","binpath")
 s = m:section(TypedSection, "AdGuardHome")
@@ -71,7 +70,7 @@ o.template = "AdGuardHome/yamleditor"
 if not fs.access(binpath) then
 	o.description=translate("WARNING!!! no bin found apply config will not be test")
 end
---- log 
+--- log
 if (fs.access("/tmp/AdGuardHometmpconfig.yaml")) then
 local c=fs.readfile("/tmp/AdGuardHometest.log")
 if (c~="") then

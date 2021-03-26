@@ -5,7 +5,7 @@ local m,s,o,o1
 local fs=require"nixio.fs"
 local uci=require"luci.model.uci".cursor()
 local configpath=uci:get("AdGuardHome","AdGuardHome","configpath") or "/etc/AdGuardHome.yaml"
-local binpath=uci:get("AdGuardHome","AdGuardHome","binpath") or "/usr/bin/AdGuardHome/AdGuardHome"
+local binpath=uci:get("AdGuardHome","AdGuardHome","binpath") or "/usr/bin/AdGuardHome"
 httpport=uci:get("AdGuardHome","AdGuardHome","httpport") or "3000"
 m = Map("AdGuardHome", "AdGuard Home")
 m.description = translate("Free and open source, powerful network-wide ads & trackers blocking DNS server.")
@@ -25,12 +25,6 @@ o.default=3000
 o.datatype="port"
 o.optional = false
 o.description = translate("<input type=\"button\" style=\"width:210px;border-color:Teal; text-align:center;font-weight:bold;color:Green;\" value=\"AdGuardHome Web:"..httpport.."\" onclick=\"window.open('http://'+window.location.hostname+':"..httpport.."/')\"/>")
----- control version
-o =s:option(Value,"cversion",translate("AdGuardHome's version"))
-o.placeholder=0
-o.default=0
-o.optional = false
-o.description = translate("In case of the latest realease is a source code that can not download the binary file")
 ---- update warning not safe
 local binmtime=uci:get("AdGuardHome","AdGuardHome","binmtime") or "0"
 local e=""
@@ -41,14 +35,14 @@ if not fs.access(binpath) then
 	e=e.." "..translate("no core")
 else
 	local version=uci:get("AdGuardHome","AdGuardHome","version")
-	local tmp=luci.sys.exec(binpath.." --version  2>/dev/null | grep -m 1 -E '[0-9]+[.][0-9.]+' -o")
 	local testtime=fs.stat(binpath,"mtime")
-	if testtime~=tonumber(binmtime) or version==nil or version ~=tmp then
-		version=string.sub(tmp, 1, -2)
+	if testtime~=tonumber(binmtime) or version==nil then
+		local tmp=luci.sys.exec(binpath.." --version | grep -m 1 -E 'v[0-9.]+' -o ")
+		version=string.sub(tmp, 1)
 		if version=="" then version="core error" end
 		uci:set("AdGuardHome","AdGuardHome","version",version)
 		uci:set("AdGuardHome","AdGuardHome","binmtime",testtime)
-		uci:commit("AdGuardHome")
+		uci:save("AdGuardHome")
 	end
 	e=version..e
 end
@@ -71,7 +65,7 @@ o.default     = "none"
 o.optional = true
 ---- bin path
 o = s:option(Value, "binpath", translate("Bin Path"), translate("AdGuardHome Bin path if no bin will auto download"))
-o.default     = "/usr/bin/AdGuardHome/AdGuardHome"
+o.default     = "/usr/bin/AdGuardHome"
 o.datatype    = "string"
 o.optional = false
 o.rmempty=false
@@ -87,7 +81,7 @@ if fs.stat(value,"type")=="dir" then
 	m.message ="error!bin path is a dir"
 	end
 	return nil
-end 
+end
 return value
 end
 --- upx
@@ -119,12 +113,12 @@ if fs.stat(value,"type")=="dir" then
 	m.message ="error!config path is a dir"
 	end
 	return nil
-end 
+end
 return value
 end
 ---- work dir
 o = s:option(Value, "workdir", translate("Work dir"), translate("AdGuardHome work dir include rules,audit log and database"))
-o.default     = "/usr/bin/AdGuardHome"
+o.default     = "/etc/AdGuardHome"
 o.datatype    = "string"
 o.optional = false
 o.rmempty=false
@@ -137,7 +131,7 @@ if fs.stat(value,"type")=="reg" then
 	m.message ="error!work dir is a file"
 	end
 	return nil
-end 
+end
 if string.sub(value, -1)=="/" then
 	return string.sub(value, 1, -2)
 else
@@ -159,20 +153,15 @@ if fs.stat(value,"type")=="dir" then
 	m.message ="error!log file is a dir"
 	end
 	return nil
-end 
+end
 return value
 end
 ---- debug
 o = s:option(Flag, "verbose", translate("Verbose log"))
 o.default = 0
 o.optional = true
----- gfwlist 
-local a
-if fs.access(configpath) then
-a=luci.sys.call("grep -m 1 -q programadd "..configpath)
-else
-a=1
-end
+---- gfwlist
+local a=luci.sys.call("grep -m 1 -q programadd "..configpath)
 if (a==0) then
 a="Added"
 else
@@ -219,7 +208,7 @@ o = s:option(Flag, "waitonboot", translate("On boot when network ok restart"))
 o.default = 1
 o.optional = true
 ---- backup workdir on shutdown
-local workdir=uci:get("AdGuardHome","AdGuardHome","workdir") or "/usr/bin/AdGuardHome"
+local workdir=uci:get("AdGuardHome","AdGuardHome","workdir") or "/etc/AdGuardHome"
 o = s:option(MultiValue, "backupfile", translate("Backup workdir files when shutdown"))
 o1 = s:option(Value, "backupwdpath", translate("Backup workdir path"))
 local name
@@ -245,7 +234,7 @@ o.optional=false
 o.description=translate("Will be restore when workdir/data is empty")
 ----backup workdir path
 
-o1.default     = "/usr/bin/AdGuardHome"
+o1.default     = "/etc/AdGuardHome"
 o1.datatype    = "string"
 o1.optional = false
 o1.validate=function(self, value)
@@ -256,7 +245,7 @@ if fs.stat(value,"type")=="reg" then
 	m.message ="error!backup dir is a file"
 	end
 	return nil
-end 
+end
 if string.sub(value,-1)=="/" then
 	return string.sub(value, 1, -2)
 else
@@ -309,7 +298,7 @@ function m.on_commit(map)
 				uci:set("AdGuardHome","AdGuardHome","ucitracktest","2")
 			end
 		end
-		uci:commit("AdGuardHome")
+		uci:save("AdGuardHome")
 	end
 end
 return m
