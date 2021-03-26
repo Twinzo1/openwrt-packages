@@ -159,7 +159,6 @@ jobs:
         sed -i 's?../../lang?$(TOPDIR)/feeds/packages/lang?g' */Makefile
         bash diy/create_acl_for_luci.sh -a || true
         bash diy/convert_translation.sh -a || true
-        sed -i 's/+rclone\( \|$\)/+rclone +fuse-utils\1/g' luci-app-rclone/Makefile
         sed -i 's/ca-certificates/ca-bundle/g' */Makefile
         sed -i 's/+libcap /+libcap +libcap-bin /' luci-app-openclash/Makefile
         sed -i 's/@GHCODELOAD/https:\/\/codeload.github.com/' */Makefile
