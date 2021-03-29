@@ -109,7 +109,6 @@ jobs:
         svn co https://github.com/openwrt/packages/trunk/utils/syncthing && rm -rf syncthing/files/etc/{config,init.d} &
         svn co https://github.com/openwrt/packages/trunk/net/openvpn &
         svn co https://github.com/openwrt/packages/trunk/utils/cgroupfs-mount &
-        svn co https://github.com/immortalwrt/luci/trunk/applications/luci-app-adguardhome &
         svn co https://github.com/immortalwrt/luci/trunk/applications/luci-app-gost &
         svn co https://github.com/immortalwrt/luci/trunk/applications/luci-app-airwhu &
         svn co https://github.com/immortalwrt/packages/trunk/net/gost &
