@@ -1,9 +1,9 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
-	delete ucitrack.@gost[-1]
-	add ucitrack gost
-	set ucitrack.@gost[-1].init=gost
+	delete ucitrack.@mwol[-1]
+	add ucitrack mwol
+	set ucitrack.@mwol[-1].init=mwol
 	commit ucitrack
 EOF
 
