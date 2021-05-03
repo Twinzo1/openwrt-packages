@@ -55,13 +55,13 @@ o.default = "fake-ip"
 end
 
 o = s:taboption("op_mode", Flag, "enable_udp_proxy", font_red..bold_on..translate("Proxy UDP Traffics")..bold_off..font_off)
-o.description = translate("Select Mode For UDP Traffics, The Servers Must Support UDP while Choose Proxy")
+o.description = translate("The Servers Must Support UDP forwarding")..", "..font_red..bold_on..translate("If Docker is Installed, UDP May Not Forward Normally")..bold_off..font_off
 o:depends("en_mode", "redir-host")
 o:depends("en_mode", "fake-ip")
 o.default=1
 
 o = s:taboption("op_mode", ListValue, "stack_type", translate("Select Stack Type"))
-o.description = translate("Select Stack Type For Tun Mode, According To The Running Speed on Your Machine")
+o.description = translate("Select Stack Type For TUN Mode, According To The Running Speed on Your Machine")
 o:depends("en_mode", "redir-host-tun")
 o:depends("en_mode", "fake-ip-tun")
 o:depends("en_mode", "redir-host-mix")
@@ -77,6 +77,10 @@ o:value("global", translate("Global Proxy Mode"))
 o:value("direct", translate("Direct Proxy Mode"))
 o:value("script", translate("Script Proxy Mode (Tun Core Only)"))
 o.default = "rule"
+
+o = s:taboption("op_mode", Flag, "disable_udp_quic", font_red..bold_on..translate("Disable QUIC")..bold_off..font_off)
+o.description = translate("Prevent YouTube and Others To Use QUIC Transmission")..", "..font_red..bold_on..translate("REJECT UDP Traffic On Port 443")..bold_off..font_off
+o.default=1
 
 o = s:taboption("op_mode", Flag, "enable_rule_proxy", font_red..bold_on..translate("Rule Match Proxy Mode")..bold_off..font_off)
 o.description = translate("Only Proxy Rules Match, Prevent BT/P2P Passing")
@@ -687,14 +691,14 @@ local t = {
 
 a = m:section(Table, t)
 
-o = a:option(Button, "Commit") 
+o = a:option(Button, "Commit", " ")
 o.inputtitle = translate("Commit Configurations")
 o.inputstyle = "apply"
 o.write = function()
   m.uci:commit("openclash")
 end
 
-o = a:option(Button, "Apply")
+o = a:option(Button, "Apply", " ")
 o.inputtitle = translate("Apply Configurations")
 o.inputstyle = "apply"
 o.write = function()

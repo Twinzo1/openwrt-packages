@@ -1,5 +1,7 @@
 #!/bin/sh
 
+alias DATE="date '+%Y-%m-%d %H:%M:%S'"
+
 # 读取设置文件
 function get_config(){
 	while [[ "$*" != "" ]]; do
@@ -10,7 +12,7 @@ function get_config(){
 
 # 初始化设置信息
 function read_config(){
-	get_config "serverchand_enable" "sckey" "serverchand_ipv4" "ipv4_interface" "ipv4_URL" "serverchand_ipv6" "ipv6_interface" "ipv6_URL" "serverchand_up" "serverchand_down" "serverchand_sheep" "serverchand_whitelist" "serverchand_blacklist" "serverchand_interface" "starttime" "endtime" "cpuload_enable" "cpuload" "temperature_enable" "temperature" "device_name" "err_enable" "network_err_event" "err_sheep_enable" "system_time_event" "autoreboot_time" "network_restart_time" "public_ip_event" "public_ip_retry_count" "soc_code" "sleeptime" "up_timeout" "down_timeout" "device_aliases" "debuglevel" "cpuload" "temperature" "send_mode" "regular_time" "regular_time_2" "regular_time_3" "interval_time" "thread_num" "timeout_retry_count" "send_tg" "tgtoken" "err_device_aliases" "sctkey" "oui_dir" "oui_data" "client_usage" "client_usage_max" "client_usage_disturb" "client_usage_whitelist"
+	get_config "serverchand_enable" "sckey" "keyword" "serverchand_ipv4" "ipv4_interface" "ipv4_URL" "serverchand_ipv6" "ipv6_interface" "ipv6_URL" "serverchand_up" "serverchand_down" "serverchand_sheep" "serverchand_whitelist" "serverchand_blacklist" "serverchand_interface" "starttime" "endtime" "cpuload_enable" "cpuload" "temperature_enable" "temperature" "device_name" "err_enable" "network_err_event" "err_sheep_enable" "system_time_event" "autoreboot_time" "network_restart_time" "public_ip_event" "public_ip_retry_count" "soc_code" "sleeptime" "up_timeout" "down_timeout" "device_aliases" "debuglevel" "cpuload" "temperature" "send_mode" "regular_time" "regular_time_2" "regular_time_3" "interval_time" "thread_num" "timeout_retry_count" "send_tg" "tgtoken" "err_device_aliases" "sctkey" "oui_dir" "oui_data" "client_usage" "client_usage_max" "client_usage_disturb" "client_usage_whitelist"
 	for str_version in "wrtbwmon" "iputils-arping" "curl" "iw"; do
 		eval `echo ${str_version:0:2}"_version"`=`opkg list-installed|grep -w ^${str_version}|awk '{print $3}'` 2>/dev/null
 	done
@@ -33,18 +35,18 @@ function serverchand_init(){
 	enable_detection
 	if [ -f "/usr/bin/serverchand/errlog" ]; then
 		cat /usr/bin/serverchand/errlog > ${logfile}
-		echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】载入上次重启前日志" >> ${logfile}
+		echo "`DATE` 【！！！】载入上次重启前日志" >> ${logfile}
 		echo "--------------------------------------------------------" >> ${logfile}
 	fi
 	down_oui &
 	deltemp
 	rm -f ${dir}fd1 ${dir}sheep_usage ${dir}old_sheep_usage ${dir}client_usage_aliases ${dir}old_client_usage_aliases /usr/bin/serverchand/errlog >/dev/null 2>&1
-	[ ! -f "/usr/sbin/wrtbwmon" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】未安装 wrtbwmon ，流量统计不可用" >> ${logfile}
+	[ ! -f "/usr/sbin/wrtbwmon" ] && echo "`DATE` 【！！！】未安装 wrtbwmon ，流量统计不可用" >> ${logfile}
 	for read_str in "ip_version" "cu_version"; do
-		[ -z `eval echo '$'$read_str` ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】依赖项 iputils-arping、curl 未安装，请确认插件是否正常运行" >> ${logfile}
+		[ -z `eval echo '$'$read_str` ] && echo "`DATE` 【！！！】依赖项 iputils-arping、curl 未安装，请确认插件是否正常运行" >> ${logfile}
 	done
-	[ -z "$sckey" ] && [ -z "$sctkey" ] && [ -z "$tgtoken" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】请填写正确的 sckey " >> ${logfile} && return 1
-	local interfacelist=`getinterfacelist` && [ -z "$interfacelist" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】无法正确获取接口信息，请确认插件是否正常运行" >> ${logfile}
+	[ -z "$sckey" ] && [ -z "$sctkey" ] && [ -z "$tgtoken" ] && echo "`DATE` 【！！！】请填写正确的 sckey " >> ${logfile} && return 1
+	local interfacelist=`getinterfacelist` && [ -z "$interfacelist" ] && echo "`DATE` 【！！！】无法正确获取接口信息，请确认插件是否正常运行" >> ${logfile}
 	return 0
 }
 
@@ -53,16 +55,16 @@ function down_oui(){
 	[ -f ${oui_base} ] && local logrow=$(grep -c "" ${oui_base}) || local logrow="0"
 	[ $logrow -lt "10" ] && rm -f ${oui_base} >/dev/null 2>&1
 	if [ ! -z "$oui_data" ] && [ "$oui_data" -ne "3" ] && [ ! -f ${oui_base} ]; then
-		echo "`date "+%Y-%m-%d %H:%M:%S"` 【初始化】设备MAC厂商信息不存在，重新下载" >> ${logfile}
+		echo "`DATE` 【初始化】设备MAC厂商信息不存在，重新下载" >> ${logfile}
 		wget --no-check-certificate -t 3 -T 15 -O ${dir}oui.txt https://linuxnet.ca/ieee/oui.txt >/dev/null 2>&1
 		if [ -f ${dir}oui.txt ] && [ "$oui_data" -eq "1" ]; then
 			cat ${dir}oui.txt|grep "base 16"|grep -i "apple\|aruba\|asus\|autelan\|belkin\|bhu\|buffalo\|cctf\|cisco\|comba\|datang\|dell\|dlink\|dowell\|ericsson\|fast\|feixun\|\
 fiberhome\|fujitsu\|grentech\|h3c\|hisense\|hiwifi\|honghai\|honghao\|hp\|htc\|huawei\|intel\|jinli\|jse\|lenovo\|lg\|liteon\|malata\|meizu\|mercury\|meru\|moto\|netcore\|\
 netgear\|nokia\|omron\|oneplus\|oppo\|philips\|router_unkown\|samsung\|shanzhai\|sony\|start_net\|sunyuanda\|tcl\|tenda\|texas\|tianyu\|tp-link\|ubq\|undefine\|VMware\|\
-utstarcom\|volans\|xerox\|xiaomi\|zdc\|zhongxing\|smartisan" > ${oui_base} && echo "`date "+%Y-%m-%d %H:%M:%S"` 【初始化】设备MAC厂商信息下载成功" >> ${logfile} || echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】设备MAC厂商信息下载失败" >> ${logfile} 
+utstarcom\|volans\|xerox\|xiaomi\|zdc\|zhongxing\|smartisan" > ${oui_base} && echo "`DATE` 【初始化】设备MAC厂商信息下载成功" >> ${logfile} || echo "`DATE` 【！！！】设备MAC厂商信息下载失败" >> ${logfile} 
 		fi
 		if [ -f ${dir}oui.txt ] && [ "$oui_data" -eq "2" ]; then
-			cat ${dir}oui.txt|grep "base 16" > ${oui_base} && echo "`date "+%Y-%m-%d %H:%M:%S"` 【初始化】设备MAC厂商信息下载成功" >> ${logfile} || echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】设备MAC厂商信息下载失败" >> ${logfile}
+			cat ${dir}oui.txt|grep "base 16" > ${oui_base} && echo "`DATE` 【初始化】设备MAC厂商信息下载成功" >> ${logfile} || echo "`DATE` 【！！！】设备MAC厂商信息下载失败" >> ${logfile}
 		fi
 		rm -f ${dir}oui.txt >/dev/null 2>&1
 	fi
@@ -74,7 +76,7 @@ function deltemp(){
 	rm -f ${dir}title ${dir}content ${dir}top ${dir}tmp_downlist ${dir}send_enable.lock >/dev/null 2>&1
 	LockFile unlock
 	[ -f ${logfile} ] && local logrow=$(grep -c "" ${logfile}) || local logrow="0"
-	[ $logrow -gt 500 ] && sed -i '1,100d' ${logfile} && echo "`date "+%Y-%m-%d %H:%M:%S"`  【清理】日志超出上限，删除前 100 条" >> ${logfile}
+	[ $logrow -gt 500 ] && sed -i '1,100d' ${logfile} && echo "`DATE`  【清理】日志超出上限，删除前 100 条" >> ${logfile}
 }
 
 # 检测程序开关
@@ -379,7 +381,7 @@ function serverchand_disturb(){
 		[ ! -z "$send_tg" ] && [ "$send_tg" -eq "1" ] && disturb_text="【Telegram推送】"
 		return 0
 	else
-		[ -z "$sheep_starttime" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【免打扰】夜深了，该休息了" >> ${logfile} && sheep_starttime=`date +%s`
+		[ -z "$sheep_starttime" ] && echo "`DATE` 【免打扰】夜深了，该休息了" >> ${logfile} && sheep_starttime=`date +%s`
 		if [ "$serverchand_sheep" -eq "1" ] ;then
 			while [ `date +%H` -lt "$endtime" ]; do
 				enable_detection
@@ -482,11 +484,11 @@ function unattended(){
 	if [ ! -z "$system_time_event" ]; then
 		local interfaceuptime=`getinterfaceuptime`
 		if [ ! -z "$autoreboot_time" ] && [ `cat /proc/uptime|awk -F. '{run_hour=$1/3600;printf("%d",run_hour)}'` -ge "$autoreboot_time" ] && [ "$system_time_event" -eq "1" ]; then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` 【无人值守任务】重启路由器咯" >> ${logfile}
+			echo "`DATE` 【无人值守任务】重启路由器咯" >> ${logfile}
 			cat ${logfile} > /usr/bin/serverchand/errlog
 			sleep 2 && reboot && exit
 		elif [ ! -z "$network_restart_time" ] && [ ! -z "$interfaceuptime" ] && [ `echo "$interfaceuptime"|awk -F. '{run_hour=$1/3600;printf("%d",run_hour)}'` -ge "$network_restart_time" ] && [ "$system_time_event" -eq "2" ]; then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` 【无人值守任务】重新拨号咯" >> ${logfile}
+			echo "`DATE` 【无人值守任务】重新拨号咯" >> ${logfile}
 			ifup wan >/dev/null 2>&1
 			sleep 60
 		fi
@@ -500,7 +502,7 @@ function unattended(){
 		local wanIP=`getip wanipv4`
 		local hostIP=`getip hostipv4`
 		if [ ! -z "$wanIP" ] && [ ! -z "$hostIP" ] && ( ! echo "$wanIP"|grep -q -w ${hostIP} );then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` 【无人值守任务】重拨尝试获取公网 ip，当前第 $public_ip_count 次 " >> ${logfile}
+			echo "`DATE` 【无人值守任务】重拨尝试获取公网 ip，当前第 $public_ip_count 次 " >> ${logfile}
 			ifup wan >/dev/null 2>&1
 			sleep 60
 			local wanIP=`getip wanipv4` && local hostIP=`getip hostipv4`
@@ -524,10 +526,10 @@ function rand_geturl(){
 	while [ -z "$check" ] || [ "$check" -ne "200" ]; do
 		local check=`getcheck`
 		if [ ! -z "$check" ] && [ "$check" -eq "200" ]; then
-			[ ! -z "$network_enable" ] && [ "$network_enable" -eq "404" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【网络状态】网络恢复正常.." >> ${logfile}
+			[ ! -z "$network_enable" ] && [ "$network_enable" -eq "404" ] && echo "`DATE` 【网络状态】网络恢复正常.." >> ${logfile}
 			local network_enable="200"
 		else
-			[ -z "$network_enable" ] || [ "$network_enable" -eq "200" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】当前网络不通！停止检测！ " >> ${logfile}
+			[ -z "$network_enable" ] || [ "$network_enable" -eq "200" ] && echo "`DATE` 【！！！！】当前网络不通！停止检测！ " >> ${logfile}
 			local network_enable="404"
 			[ -z "$network_err_time" ] && network_err_time=`date +%s`
 			if [ ! -z "$network_err_event" ] && [ "$((`date +%s`-$network_err_time))" -ge "600" ]; then
@@ -539,19 +541,19 @@ function rand_geturl(){
 					if [ "$network_err_event" -eq "1" ] ;then
 						if [ "$retry_count" -lt "3" ] ;then
 							echo "$retry_count" > /usr/bin/serverchand/autoreboot_count
-							echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】正在尝试重启路由，当前第 $retry_count 次 " >> ${logfile}
+							echo "`DATE` 【！！！！】正在尝试重启路由，当前第 $retry_count 次 " >> ${logfile}
 							cat ${logfile} > /usr/bin/serverchand/errlog
 							sleep 2 && reboot && exit
 						fi
-						[ "$retry_count" -eq "3" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】已经重启路由2次，修复失败，请主人自行修复哦" >> ${logfile}
+						[ "$retry_count" -eq "3" ] && echo "`DATE` 【！！！！】已经重启路由2次，修复失败，请主人自行修复哦" >> ${logfile}
 					elif [ "$network_err_event" -eq "2" ] ;then
-						[ "$retry_count" -lt "3" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】正在尝试重启网络，当前第 $retry_count 次 " >> ${logfile} && ifup wan >/dev/null 2>&1
-						[ "$retry_count" -eq "3" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】已经重启网络2次，修复失败，请主人自行修复哦 " >> ${logfile}
+						[ "$retry_count" -lt "3" ] && echo "`DATE` 【！！！！】正在尝试重启网络，当前第 $retry_count 次 " >> ${logfile} && ifup wan >/dev/null 2>&1
+						[ "$retry_count" -eq "3" ] && echo "`DATE` 【！！！！】已经重启网络2次，修复失败，请主人自行修复哦 " >> ${logfile}
 					elif [ "$network_err_event" -eq "3" ] ;then				
 						if [ "$retry_count" -eq "1" ] ;then
-							echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】正在尝试修复网络，当前第 1 次，重启网络服务中 " >> ${logfile} && network_restart
+							echo "`DATE` 【！！！！】正在尝试修复网络，当前第 1 次，重启网络服务中 " >> ${logfile} && network_restart
 						elif [ "$retry_count" -eq "2" ] ;then
-							echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】正在尝试修复网络，当前第 2 次，关闭可能造成网络断开的软件" >> ${logfile}
+							echo "`DATE` 【！！！！】正在尝试修复网络，当前第 2 次，关闭可能造成网络断开的软件" >> ${logfile}
 							[ `uci get koolproxy.@global[0].enabled 2>/dev/null` -eq "1" ] && [ `uci get koolproxy.@global[0].koolproxy_mode 2>/dev/null` -eq "1" ] && /etc/init.d/koolproxy stop >/dev/null 2>&1
 							[ `uci get adbyby.@adbyby[0].enable 2>/dev/null` -eq "1" ] && [ `uci get adbyby.@adbyby[0].wan_mode 2>/dev/null` -eq "0" ] && /etc/init.d/adbyby stop >/dev/null 2>&1
 							[ `uci get passwall.@global[0].enabled 2>/dev/null` -eq "1" ] && [ `uci get passwall.@global[0].proxy_mode 2>/dev/null|grep global` ] && /etc/init.d/koolproxy stop >/dev/null 2>&1
@@ -560,7 +562,7 @@ function rand_geturl(){
 							[ -z "$shadowsocksr_enabled" ] && [ ! -z "$shadowsocksr_run_mode" ] && /etc/init.d/shadowsocksr stop >/dev/null 2>&1
 							sleep 60 && network_restart
 						elif [ "$retry_count" -eq "3" ] ;then
-							echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】正在尝试修复网络，当前第 3 次，备份设置项，并修改相关设置" >> ${logfile}
+							echo "`DATE` 【！！！！】正在尝试修复网络，当前第 3 次，备份设置项，并修改相关设置" >> ${logfile}
 							mkdir -p /usr/bin/serverchand/configbak
 							cp -p -f /etc/config/network /usr/bin/serverchand/configbak/network
 							cp -p -f /etc/config/dhcp /usr/bin/serverchand/configbak/dhcp
@@ -587,7 +589,7 @@ function rand_geturl(){
 							sleep 2 && reboot && exit
 						elif [ "$retry_count" -eq "5" ] ;then
 							echo "$retry_count" > /usr/bin/serverchand/autoreboot_count
-							echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！！】修复失败，还原设置中，请自行检查网络设置" >> ${logfile}
+							echo "`DATE` 【！！！！】修复失败，还原设置中，请自行检查网络设置" >> ${logfile}
 							cp -p -f /usr/bin/serverchand/configbak/network /etc/config/network
 							cp -p -f /usr/bin/serverchand/configbak/dhcp /etc/config/dhcp
 							cp -p -f /usr/bin/serverchand/configbak/firewall /etc/config/firewall
@@ -619,28 +621,28 @@ function ip_changes(){
 		local last_IPv4=$(cat "${dir}ip"|grep IPv4|awk '{print $2}'|grep -v "^$"|sort -u)
 		local last_IPv6=$(cat "${dir}ip"|grep IPv6|awk '{print $2}'|grep -v "^$"|sort -u)
 		if [ ! -z "$serverchand_ipv4" ] && [ "$serverchand_ipv4" -ne "0" ] && [ ! -z "$IPv4" ] && ( ! echo ${IPv4}|grep -w -q ${last_IPv4} ); then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text}当前IP：${IPv4}" >> ${logfile}
+			echo "`DATE` ${disturb_text}当前IP：${IPv4}" >> ${logfile}
 			echo IPv4 $IPv4 > ${dir}ip && echo -e IPv6 $last_IPv6 >> ${dir}ip
 			title="IP 地址变化"
 			content="${content}${markdown_splitline}#### <font color=#92D050>IP 地址变化</font>${markdown_linefeed}${markdown_tab}当前 IP：${IPv4}"
 		elif [ ! -z "$serverchand_ipv4" ] && [ "$serverchand_ipv4" -ne "0" ] && [ -z "$IPv4" ]; then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】获取 IPv4 地址失败" >> ${logfile}
+			echo "`DATE` 【！！！】获取 IPv4 地址失败" >> ${logfile}
 		fi
 		
 		if [ ! -z "$serverchand_ipv6" ] && [ "$serverchand_ipv6" -ne "0" ] && [ ! -z "$IPv6" ] && ( ! echo "$IPv6"|grep -w -q ${last_IPv6} ); then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text}当前IPv6：${IPv6}" >> ${logfile}
+			echo "`DATE` ${disturb_text}当前IPv6：${IPv6}" >> ${logfile}
 			echo IPv4 $IPv4 > ${dir}ip && echo -e IPv6 $IPv6 >> ${dir}ip
 			[ -z "$title" ] && title="IPv6 地址变化"
 			[ ! -z "$title" ] && title="IP 地址变化"
 			content="${content}${markdown_splitline}#### <font color=#92D050>IPv6 地址变化</font>${markdown_linefeed}${markdown_tab}当前 IPv6：${IPv6}"				
 		elif [ ! -z "$serverchand_ipv6" ] && [ "$serverchand_ipv6" -ne "0" ] && [ -z "$IPv6" ]; then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】获取 IPv6 地址失败" >> ${logfile}
+			echo "`DATE` 【！！！】获取 IPv6 地址失败" >> ${logfile}
 		fi
 		
 	else
-		echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text}路由器已经重启!" >> ${logfile}
-		[ ! -z "$serverchand_ipv4" ] && [ "$serverchand_ipv4" -ne "0" ] && echo "`date "+%Y-%m-%d %H:%M:%S"`  当前IP: ${IPv4}" >> ${logfile}
-		[ ! -z "$serverchand_ipv6" ] && [ "$serverchand_ipv6" -ne "0" ] && echo "`date "+%Y-%m-%d %H:%M:%S"`  当前IPv6: ${IPv6}" >> ${logfile}
+		echo "`DATE` ${disturb_text}路由器已经重启!" >> ${logfile}
+		[ ! -z "$serverchand_ipv4" ] && [ "$serverchand_ipv4" -ne "0" ] && echo "`DATE`  当前IP: ${IPv4}" >> ${logfile}
+		[ ! -z "$serverchand_ipv6" ] && [ "$serverchand_ipv6" -ne "0" ] && echo "`DATE`  当前IPv6: ${IPv6}" >> ${logfile}
 		echo IPv4 $IPv4 > ${dir}ip && echo -e IPv6 $IPv6 >> ${dir}ip	
 		title="路由器重新启动"
 		content="${content}${markdown_splitline}#### <font color=#92D050>路由器重新启动</font>"
@@ -689,7 +691,7 @@ function up(){
 				local title="设备状态变化"
 				local content="${markdown_splitline}#### <font color=#92D050>新设备连接</font>${markdown_linefeed}${markdown_tab}客户端名：${markdown_space}${markdown_space}${markdown_space}${markdown_space}${markdown_space}${ip_name}${markdown_linefeed}${markdown_tab}客户端IP： ${markdown_space}${markdown_space}${markdown_space}${markdown_space}${1}${markdown_linefeed}${markdown_tab}客户端MAC：${markdown_space}${markdown_space}${markdown_space}${markdown_space}${ip_mac}${markdown_linefeed}${markdown_tab}网络接口：${markdown_space}${markdown_space}${markdown_space}${markdown_space}${markdown_space}${ip_interface}"
 			fi				
-			echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text}新设备 ${ip_name} ${1} 连接了">> ${logfile}
+			echo "`DATE` ${disturb_text}新设备 ${ip_name} ${1} 连接了">> ${logfile}
 			[ ! -z "$serverchand_blacklist" ] && local title="你偷偷关注的设备上线了"
 			[ ! -z "$title" ] && echo "$title" >${dir}title
 			[ ! -z "$content" ] && echo -n "$content" >>${dir}content
@@ -744,7 +746,7 @@ function down_send(){
 			title="设备状态变化"
 			content="${content}${markdown_splitline}#### <font color=#FF6666>设备断开连接</font>${markdown_linefeed}${markdown_tab}客户端名：${markdown_space}${markdown_space}${markdown_space}${markdown_space}${markdown_space}${ip_name}${markdown_linefeed}${markdown_tab}客户端IP： ${markdown_space}${markdown_space}${markdown_space}${markdown_space}${ip}${markdown_linefeed}${markdown_tab}客户端MAC：${markdown_space}${markdown_space}${markdown_space}${markdown_space}${ip_mac}$ip_total${markdown_linefeed}${markdown_tab}在线时间： ${markdown_space}${markdown_space}${markdown_space}${markdown_space}${time1}"
 		fi
-		echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text}设备 ${ip_name} ${ip} 断开连接 " >> ${logfile}
+		echo "`DATE` ${disturb_text}设备 ${ip_name} ${ip} 断开连接 " >> ${logfile}
 	done
 	rm -f ${dir}tmp_downlist >/dev/null 2>&1
 }
@@ -783,10 +785,10 @@ function cpu_load(){
 	if [ ! -z "$temperature_enable" ] && [ "$temperature_enable" -eq "1" ] && [ ! -z "$temperature" ]; then
 		[ -z "$temperature_time" ] && temperature_time=`date +%s`
 		local cpu_wendu=`soc_temp`;
-		[ -z "$cpu_wendu" ] && echo "`date "+%Y-%m-%d %H:%M:%S"`  【！！！】无法读取设备温度，请检查命令" >> ${logfile}
+		[ -z "$cpu_wendu" ] && echo "`DATE`  【！！！】无法读取设备温度，请检查命令" >> ${logfile}
 		
 		if [ "$cpu_wendu" -gt "$temperature" ]; then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！警报！！】 CPU 温度过高: ${cpu_wendu}" >> ${logfile}
+			echo "`DATE` 【！！警报！！】 CPU 温度过高: ${cpu_wendu}" >> ${logfile}
 		else
 			temperature_time=`date +%s`
 		fi
@@ -794,7 +796,7 @@ function cpu_load(){
 		if [ "$((`date +%s`-$temperature_time))" -ge "300" ] && [ -z "$temperaturecd_time" ]; then
 			title="CPU 温度过高！"
 			temperaturecd_time=`date +%s`
-			echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text} CPU 温 度过高: ${cpu_wendu}" >> ${logfile}
+			echo "`DATE` ${disturb_text} CPU 温 度过高: ${cpu_wendu}" >> ${logfile}
 			content="${content}${markdown_splitline}#### <font color=#FF6666>CPU 温度过高</font>${markdown_linefeed}${markdown_tab}CPU 温度已连续五分钟超过预设${markdown_linefeed}${markdown_tab}接下来一小时不再提示${markdown_linefeed}${markdown_tab}当前温度：${cpu_wendu}"
 		elif [ ! -z "$temperaturecd_time" ] && [ "$((`date +%s`-$temperaturecd_time))" -ge "3300" ] ;then
 			unset temperaturecd_time
@@ -804,10 +806,10 @@ function cpu_load(){
 	if [ ! -z "$cpuload_enable" ] && [ "$cpuload_enable" -eq "1" ] && [ ! -z "$cpuload" ]; then
 		[ -z "$cpuload_time" ] && cpuload_time=`date +%s`
 		local cpu_fuzai=`cat /proc/loadavg|awk '{print $1}'` 2>/dev/null
-		[ -z "$cpu_fuzai" ] && echo "`date "+%Y-%m-%d %H:%M:%S"`  【！！！】无法读取设备负载，请检查命令" >> ${logfile}
+		[ -z "$cpu_fuzai" ] && echo "`DATE`  【！！！】无法读取设备负载，请检查命令" >> ${logfile}
 		
 		if [ `expr $cpu_fuzai \> $cpuload` -eq "1" ]; then
-			echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！警报！！】 CPU 负载过高: ${cpu_fuzai}" >> ${logfile}
+			echo "`DATE` 【！！警报！！】 CPU 负载过高: ${cpu_fuzai}" >> ${logfile}
 			cputop log
 		else
 			cpuload_time=`date +%s`
@@ -821,7 +823,7 @@ function cpu_load(){
 				title="CPU 负载过高！"
 			fi
 			cpucd_time=`date +%s`
-			echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text} CPU 负 载过高: ${cpu_fuzai}" >> ${logfile}
+			echo "`DATE` ${disturb_text} CPU 负 载过高: ${cpu_fuzai}" >> ${logfile}
 			content="${content}${markdown_splitline}#### <font color=#FF6666>CPU 负载过高</font>${markdown_linefeed}${markdown_tab}CPU 负载已连续五分钟超过预设${markdown_linefeed}${markdown_tab}接下来一小时不再提示${markdown_linefeed}${markdown_tab}当前负载：${cpu_fuzai}"
 			cputop
 		elif [ ! -z "$cpucd_time" ] && [ "$((`date +%s`-$cpucd_time))" -ge "3300" ] ;then
@@ -844,13 +846,13 @@ function cputop(){
 		fi
 		local top_i=`expr ${top_i} + 1`
 	done
-	[ ! -z "$1" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！警报！！】 CPU 占用前三: ${logtop}" >> ${logfile}
+	[ ! -z "$1" ] && echo "`DATE` 【！！警报！！】 CPU 占用前三: ${logtop}" >> ${logfile}
 	rm -f ${dir}top >/dev/null 2>&1
 }
 
 # 发送定时数据
 function send(){
-	echo "`date "+%Y-%m-%d %H:%M:%S"` 【定时数据】创建定时任务" >> ${logfile}
+	echo "`DATE` 【定时数据】创建定时任务" >> ${logfile}
 	serverchand_disturb;local send_disturb=$?
 	get_config "send_title" "router_status" "client_list" "router_temp" "router_wan"
 
@@ -905,12 +907,13 @@ function send(){
 	[ ! -z "$device_name" ] && local send_title="【$device_name】${send_title}"
 	local send_title=`echo "$send_title"|sed $'s/\ / /g'|sed $'s/\"/%22/g'|sed $'s/\#/%23/g'|sed $'s/\&/%26/g'|sed $'s/\,/%2C/g'|sed $'s/\//%2F/g'|sed $'s/\:/%3A/g'|sed $'s/\;/%3B/g'|sed $'s/\=/%3D/g'|sed $'s/\@/%40/g'`
 	[ -z "$send_content" ] && local send_content="${markdown_splitline}#### <font color=#FF6666>我遇到了一个难题</font>${markdown_linefeed}${markdown_tab}定时发送选项错误，你没有选择需要发送的项目，该怎么办呢${markdown_splitline}"
-	local nowtime=`date "+%Y-%m-%d %H:%M:%S"`
-	serverchand_send="curl -s \"https://oapi.dingtalk.com/robot/send?access_token=${sckey}\" -H 'Content-Type: application/json' -d '{\"msgtype\": \"markdown\",\"markdown\": {\"title\":\"${send_title}\",\"text\":\"#### <font color=#6A65FF>${send_title}</font>${markdown_linefeed}${nowtime}${markdown_linefeed}${send_content}\"}}'"
-	[ "$send_disturb" -eq "0" ] && [ -z "$send_tg" ] && eval $serverchand_send >/dev/null 2>&1
+	local send_content=`echo "$send_content"<br /> "$keyword"`
+	local nowtime=`DATE`
+	serverchand_send="curl -s \"https://oapi.dingtalk.com/robot/send?access_token=${sckey}\" -H 'Content-Type: application/json' -d '{\"msgtype\": \"markdown\",\"markdown\": {\"title\":\"${send_title}\",\"text\":\"${nowtime}${markdown_linefeed}${send_content}\"}}'"
+	[ "$send_disturb" -eq "0" ] && [ -z "$send_tg" ] && eval $serverchand_send >> ${logfile}
 	[ "$send_disturb" -eq "0" ] && [ ! -z "$send_tg" ] && [ "$send_tg" -eq "1" ] && curl -d "text=${send_title}${markdown_linefeed}${nowtime}${markdown_linefeed}${send_content}" -X POST "${tgtoken}" >/dev/null 2>&1
 	deltemp
-	echo "`date "+%Y-%m-%d %H:%M:%S"` ${disturb_text}定时推送任务完成" >> ${logfile}
+	echo "`DATE` ${disturb_text}定时推送任务完成" >> ${logfile}
 }
 
 # 初始化
@@ -937,10 +940,10 @@ if [ "$1" ] ;then
 fi
 
 # 载入在线设备
-serverchand_init;[ $? -eq 1 ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】读取设置出错，请检查设置项 " >> ${logfile} && exit
-echo "`date "+%Y-%m-%d %H:%M:%S"` 【初始化】载入在线设备" >> ${logfile}
+serverchand_init;[ $? -eq 1 ] && echo "`DATE` 【！！！】读取设置出错，请检查设置项 " >> ${logfile} && exit
+echo "`DATE` 【初始化】载入在线设备" >> ${logfile}
 > ${dir}send_enable.lock && serverchand_first && deltemp
-echo "`date "+%Y-%m-%d %H:%M:%S"` 【初始化】初始化完成" >> ${logfile}
+echo "`DATE` 【初始化】初始化完成" >> ${logfile}
 
 # 循环
 while [ "$serverchand_enable" -eq "1" ]; do
@@ -979,7 +982,7 @@ while [ "$serverchand_enable" -eq "1" ]; do
 	[ ! -f "${dir}send_enable.lock" ] && get_client_usage
 
 	if [ ! -f "${dir}send_enable.lock" ] && [ ! -z "$title" ] && [ ! -z "$content" ]; then
-		nowtime=`date "+%Y-%m-%d %H:%M:%S"`
+		nowtime=`DATE`
 		[ ! -z "$device_name" ] && title="【$device_name】$title"
 		title=`echo "$title"|sed $'s/\ / /g'|sed $'s/\"/%22/g'|sed $'s/\#/%23/g'|sed $'s/\&/%26/g'|sed $'s/\,/%2C/g'|sed $'s/\//%2F/g'|sed $'s/\:/%3A/g'|sed $'s/\;/%3B/g'|sed $'s/\=/%3D/g'|sed $'s/\@/%40/g'`
 		serverchand_send="curl -s \"https://oapi.dingtalk.com/robot/send?access_token=${sckey}\" -H 'Content-Type: application/json' -d '{\"msgtype\": \"markdown\",\"markdown\": {\"title\":\"${title}\",\"text\":\"#### **<font color=#6A65FF>${title}</font>**${markdown_linefeed}${nowtime}${markdown_linefeed}${content}${markdown_linefeed}**<font color=#6A65FF>${title}</font>**\"}}'"

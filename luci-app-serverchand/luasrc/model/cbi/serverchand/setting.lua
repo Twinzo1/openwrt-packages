@@ -35,7 +35,11 @@ a:value("",translate("钉钉"))
 a:value("1",translate("Telegram"))
 a:value("2",translate("微信测试号版"))
 
-a=s:taboption("basic", Value,"sckey",translate('Webhook'), translate("钉钉机器人 Webhook").."<br>调用代码获取<a href='https://ding-doc.dingtalk.com/' target='_blank'>点击这里</a><br><br>")
+a=s:taboption("basic", Value,"sckey",translate('Token'), translate("钉钉机器人 Webhook").."<br>调用代码获取<a href='https://ding-doc.dingtalk.com/' target='_blank'>点击这里</a><br><br>")
+a.rmempty = true
+a:depends("send_tg","")
+
+a=s:taboption("basic", Value,"keyword",translate('Key word'), translate("钉钉机器人 关键词"))
 a.rmempty = true
 a:depends("send_tg","")
 

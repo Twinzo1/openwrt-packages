@@ -26,11 +26,11 @@ msgstr "规则集与策略组管理"
 msgid "Game Rules and Groups"
 msgstr "游戏规则与策略组管理"
 
-msgid "Other Rule Providers and Groups"
-msgstr "第三方规则集与策略组管理"
+msgid "Other Rule Providers and Groups (Only TUN Core Support)"
+msgstr "第三方规则集与策略组管理（仅TUN内核）"
 
-msgid "Custom Rule Providers and Groups"
-msgstr "自定义规则集与策略组管理"
+msgid "Custom Rule Providers and Groups (Only TUN Core Support)"
+msgstr "自定义规则集与策略组管理（仅TUN内核）"
 
 msgid "General Settings"
 msgstr "常规设置"
@@ -156,13 +156,13 @@ msgid "Direct Proxy Mode"
 msgstr "Direct【全局直连】"
 
 msgid "Script Proxy Mode (Tun Core Only)"
-msgstr "Script【脚本模式 - 仅Tun内核】"
+msgstr "Script【脚本模式 - 仅TUN内核】"
 
 msgid "Select Stack Type"
 msgstr "网络栈类型"
 
-msgid "Select Stack Type For Tun Mode, According To The Running Speed on Your Machine"
-msgstr "请自行根据运行速度为Tun模式选择合适的网络栈"
+msgid "Select Stack Type For TUN Mode, According To The Running Speed on Your Machine"
+msgstr "请自行根据运行速度为TUN模式选择合适的网络栈"
 
 msgid "China IP Route"
 msgstr "实验性：绕过中国大陆IP"
@@ -864,14 +864,11 @@ msgstr "（启用或禁用更新）"
 msgid "Config Alias"
 msgstr "配置文件名"
 
-msgid "(Name For Distinguishing)"
-msgstr "（用于区分，请勿重名）"
+msgid "Name For Distinguishing"
+msgstr "用于区分，请勿重名"
 
 msgid "Subscribe Address"
 msgstr "订阅地址"
-
-msgid "(Not Null)"
-msgstr "（空值无效）"
 
 msgid "Keyword Match"
 msgstr "筛选节点"
@@ -879,8 +876,8 @@ msgstr "筛选节点"
 msgid "Exclude Keyword Match"
 msgstr "排除节点"
 
-msgid "(eg: hk or tw&bgp)"
-msgstr "（格式示例：香港 或 台湾&bgp 或 新加坡&bgp&奈飞）"
+msgid "eg: hk or tw&bgp"
+msgstr "格式示例：香港 或 台湾&bgp 或 新加坡&bgp&奈飞"
 
 msgid "Config File List"
 msgstr "配置文件列表"
@@ -969,8 +966,20 @@ msgstr "第三方规则集列表"
 msgid "Proxy UDP Traffics"
 msgstr "*UDP流量转发"
 
-msgid "Select Mode For UDP Traffics, The Servers Must Support UDP while Choose Proxy"
+msgid "The Servers Must Support UDP forwarding"
 msgstr "启用时服务器必须支持UDP转发"
+
+msgid "If Docker is Installed, UDP May Not Forward Normally"
+msgstr "安装了Docker的固件请使用TUN模式，否则可能无法正常转发UDP，造成游戏异常"
+
+msgid "Disable QUIC"
+msgstr "*禁用QUIC"
+
+msgid "Prevent YouTube and Others To Use QUIC Transmission"
+msgstr "防止YouTube等使用QUIC导致速度不佳"
+
+msgid "REJECT UDP Traffic On Port 443"
+msgstr "禁用443端口UDP流量"
 
 msgid "Operation Mode"
 msgstr "模式设置"
@@ -1320,7 +1329,7 @@ msgstr "下载最新版本客户端"
 msgid "Download"
 msgstr "下载到本地"
 
-msgid "Restore Default Configuration"
+msgid "Restore Default Config"
 msgstr "还原默认配置"
 
 msgid "One Click Check Update"
@@ -1329,7 +1338,7 @@ msgstr "一键检查更新"
 msgid "Failed to get the latest version. Please try again later!"
 msgstr "最新版本获取失败，请稍后再试！"
 
-msgid "Are you sure want to restore the default configuration?"
+msgid "Are you sure want to restore the default config?"
 msgstr "确定要还原默认配置吗？"
 
 msgid "Restore succeeded!"
@@ -1457,3 +1466,21 @@ msgstr "设置日志文件大小（KB）"
 
 msgid "Download Log"
 msgstr "下载日志"
+
+msgid "Convert Address"
+msgstr "订阅转换服务地址"
+
+msgid "Note: There is A Risk of Privacy Leakage in Online Convert"
+msgstr "注意：在线订阅转换存在隐私泄露风险"
+
+msgid "Remove Core"
+msgstr "删除内核"
+
+msgid "Are you sure want to remove all core files?"
+msgstr "确定要删除所有内核文件吗？"
+
+msgid "Remove succeeded!"
+msgstr "删除成功！"
+
+msgid "Remove failed!"
+msgstr "删除失败！"
