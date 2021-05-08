@@ -84,14 +84,12 @@ jobs:
         git clone --depth 1 https://github.com/small-5/ddns-scripts-aliyun &
         git clone --depth 1 https://github.com/walkingsky/luci-wifidog luci-app-wifidog &
         git clone --depth 1 https://github.com/peter-tank/luci-app-autorepeater &
-        git clone --depth 1 https://github.com/zzsj0928/luci-app-serverchand &
         git clone --depth 1 https://github.com/CCnut/feed-netkeeper && mv -n feed-netkeeper/* ./ ; rm -Rf feed-netkeeper &
         git clone --depth 1 https://github.com/fw876/helloworld && mv -n helloworld/* ./ ; rm -Rf helloworld &
         git clone --depth 1 https://github.com/linkease/ddnsto-openwrt && mv -n ddnsto-openwrt/* ./ ; rm -Rf ddnsto-openwrt &
 
         svn co https://github.com/garypang13/openwrt-packages/tree/master/diy ./diy &
         svn co https://github.com/Twinzo1//serverchan/trunk/luci-app-serverchan &
-        svn co https://github.com/Twinzo1//serverchan/trunk/luci-app-serverchand &
         svn co https://github.com/Twinzo1/AdGuardHome/trunk/luci-app-adguardhome &
         svn co https://github.com/Twinzo1/AdGuardHome/trunk/luci-app-adguardhome1 &
         svn co https://github.com/Twinzo1/smartdns/trunk/luci-app-smartdns &
