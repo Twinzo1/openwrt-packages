@@ -96,7 +96,7 @@ jobs:
         svn co https://github.com/Twinzo1/AdGuardHome/trunk/luci-app-adguardhome1 &
         svn co https://github.com/Twinzo1/smartdns/trunk/luci-app-smartdns &
         svn co https://github.com/Twinzo1/smartdns/trunk/smartdns &
-        svn co https://github.com/Lienol/openwrt/trunk/package/diy/luci-app-dockerman &
+        svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman &
         svn co https://github.com/Lienol/openwrt-packages/trunk/net/https-dns-proxy &
         svn co https://github.com/NoTengoBattery/openwrt-mt7621/trunk/feeds/luci/applications/luci-app-compressed-memory &
         svn co https://github.com/NoTengoBattery/openwrt-mt7621/trunk/package/system/compressed-memory &
