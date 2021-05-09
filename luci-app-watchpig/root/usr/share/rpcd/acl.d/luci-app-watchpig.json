@@ -1,0 +1,11 @@
+{
+	"luci-app-watchpig": {
+		"description": "Grant UCI access for luci-app-watchpig",
+		"read": {
+			"uci": [ "watchpig" ]
+		},
+		"write": {
+			"uci": [ "watchpig" ]
+		}
+	}
+}

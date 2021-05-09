@@ -1,0 +1,11 @@
+{
+	"luci-app-mac": {
+		"description": "Grant UCI access for luci-app-mac",
+		"read": {
+			"uci": [ "mac" ]
+		},
+		"write": {
+			"uci": [ "mac" ]
+		}
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"luci-app-oafControl": {
+		"description": "Grant UCI access for luci-app-oafControl",
+		"read": {
+			"uci": [ "oafControl" ]
+		},
+		"write": {
+			"uci": [ "oafControl" ]
+		}
+	}
+}

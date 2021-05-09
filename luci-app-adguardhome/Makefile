@@ -58,7 +58,7 @@ define Package/luci-app-adguardhome/install
 	$(INSTALL_DATA)  ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d
 
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	po2lmo ./po/zh-cn/AdGuardHome.po $(1)/usr/lib/lua/luci/i18n/AdGuardHome.zh-cn.lmo
+	po2lmo ./po/zh_Hans/AdGuardHome.po $(1)/usr/lib/lua/luci/i18n/AdGuardHome.zh-cn.lmo
 endef
 
 define Package/luci-app-adguardhome/postinst

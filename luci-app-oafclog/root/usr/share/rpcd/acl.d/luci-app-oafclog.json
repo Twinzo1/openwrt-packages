@@ -1,0 +1,11 @@
+{
+	"luci-app-oafclog": {
+		"description": "Grant UCI access for luci-app-oafclog",
+		"read": {
+			"uci": [ "oafclog" ]
+		},
+		"write": {
+			"uci": [ "oafclog" ]
+		}
+	}
+}
