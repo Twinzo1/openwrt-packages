@@ -87,9 +87,8 @@ jobs:
         git clone --depth 1 https://github.com/CCnut/feed-netkeeper && mv -n feed-netkeeper/* ./ ; rm -Rf feed-netkeeper &
         git clone --depth 1 https://github.com/fw876/helloworld && mv -n helloworld/* ./ ; rm -Rf helloworld &
         git clone --depth 1 https://github.com/linkease/ddnsto-openwrt && mv -n ddnsto-openwrt/* ./ ; rm -Rf ddnsto-openwrt &
-        git clone --depth 1 https://github.com/Twinzo1//serverchan/trunk/luci-app-pushbot &
+        git clone --depth 1 https://github.com/Twinzo1/serverchan luci-app-pushbot &
 
-        svn co https://github.com/garypang13/openwrt-packages/tree/master/diy ./diy &
         svn co https://github.com/Twinzo1/AdGuardHome/trunk/luci-app-adguardhome &
         svn co https://github.com/Twinzo1/AdGuardHome/trunk/luci-app-adguardhome1 &
         svn co https://github.com/Twinzo1/smartdns/trunk/luci-app-smartdns &
