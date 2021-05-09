@@ -42,8 +42,6 @@ jobs:
         git rm -r --cache *
         (git clone --depth 1 https://github.com/Twinzo1/openwrt ./openwrt && rm ./openwrt/*.md && mv ./openwrt/* ./ && rm -rf ./openwrt)&
         
-        git clone --depth 1 https://github.com/garypang13/luci-app-bypass &
-        git clone --depth 1 https://github.com/garypang13/luci-app-bypass &
         git clone --depth 1 https://github.com/garypang13/luci-app-dnsfilter &
         git clone --depth 1 https://github.com/garypang13/openwrt-static-qb && mv -f openwrt-static-qb/* ./ ; rm -Rf openwrt-static-qb &
         git clone --depth 1 https://github.com/garypang13/aria2 &
