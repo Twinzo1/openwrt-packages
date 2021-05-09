@@ -161,7 +161,7 @@ jobs:
         find */luasrc/view/ -maxdepth 2 -name "*.htm" | xargs -i sed -i 's?"http://" + window.location.hostname?window.location.protocol + "//" + window.location.hostname?g' {}
         find ./*/ -maxdepth 1 -name "Makefile" ! -path "*tinyfecvpn*" ! -path "*gowebdav*" | xargs -i sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" {}
         sed -i 's/SUBDIRS=/M=/g' */Makefile\
-        # 清理石像鬼插件
+        # 清理石像鬼插件 \
         rm -Rf *gargoyle*
         # sed -i 's/\(add ucitrack \(.*\)\)/\1\n\tservice \2 enable/g' luci-app*/root/etc/uci-defaults/*
 
