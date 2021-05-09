@@ -138,10 +138,11 @@ jobs:
         rm -rf .svn
         svn export --force https://github.com/immortalwrt/immortalwrt/branches/openwrt-18.06/package/ntlf9t && mv -n ntlf9t/* ./ ; rm -rf ntlf9t
         rm -rf .svn
-
-    - name: SSH connection to Actions
-      uses: garypang13/debugger-action@master
-      if: 1 == 0
+      
+    - name: Apply patches
+      run: |
+        sed -i "s/\r//g" open-app-filter/src/appfilter_ubus.c
+        find "diy/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -p1 -E --forward --no-backup-if-mismatch"
 
     - name: Modify
       run: |
@@ -166,11 +167,6 @@ jobs:
         find ./*/ -maxdepth 1 -name "Makefile" ! -path "*tinyfecvpn*" ! -path "*gowebdav*" | xargs -i sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" {}
         sed -i 's/SUBDIRS=/M=/g' */Makefile
         # sed -i 's/\(add ucitrack \(.*\)\)/\1\n\tservice \2 enable/g' luci-app*/root/etc/uci-defaults/*
-
-    - name: Apply patches
-      run: |
-        sed -i "s/\r//g" open-app-filter/src/appfilter_ubus.c
-        find "diy/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -p1 -E --forward --no-backup-if-mismatch"
 
     - name: Apply
       run: |
