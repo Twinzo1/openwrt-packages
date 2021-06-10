@@ -133,8 +133,8 @@ jobs:
         rm -rf .svn
         git clone --depth 1 https://github.com/xiaorouji/openwrt-passwall && mv -n openwrt-passwall/* ./ ; rm -Rf openwrt-passwall
         rm -rf .svn
-        svn co "https://github.com/immortalwrt/immortalwrt/trunk/package/ctcgfw" ./
-        rm -rf .svn
+        #svn co "https://github.com/immortalwrt/immortalwrt/trunk/package/ctcgfw" ./
+        #rm -rf .svn
       
     - name: Apply patches
       run: |
