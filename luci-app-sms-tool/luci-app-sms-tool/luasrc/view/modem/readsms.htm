@@ -30,6 +30,11 @@
 
 <%+header%>
 
+<!--
+-- Copyright 2020-2021 Rafał Wabik (IceG) - From eko.one.pl forum
+-- Licensed to the GNU General Public License v3.0.
+-->
+
 <style>
 
 table {
@@ -59,7 +64,10 @@ tr:nth-child(odd) {background-color: #f5f5f5;}
 			XHR.get('<%=luci.dispatcher.build_url("admin", "modem", "sms", "readsim")%>', null,
 			function(x, sim)
 			{
-			document.getElementById('usse').innerHTML=sim.use  + " / " + sim.all;
+			var vn = parseInt(sim.use) || 0;
+			var mn = parseInt(sim.all) || 100;
+			var pc = Math.floor((100 / mn) * vn);
+			document.getElementById('usse').innerHTML=sim.use  + " / " + sim.all + " " + '('+ pc + '%)';
 
 			}
 			);
@@ -196,7 +204,11 @@ function delete_me()
 		XHR.get('<%=luci.dispatcher.build_url("admin", "modem", "sms", "readsim")%>', null,
 			function(x, sim)
 			{
-			document.getElementById('usse').innerHTML=sim.use  + " / " + sim.all;
+			var vn = parseInt(sim.use) || 0;
+			var mn = parseInt(sim.all) || 100;
+			var pc = Math.floor((100 / mn) * vn);
+			document.getElementById('usse').innerHTML=sim.use  + " / " + sim.all + " " + '('+ pc + '%)';
+
 
 			}
 			);
@@ -236,7 +248,7 @@ function delete_me()
 
 			function()
 			{
-			document.getElementById('usse').innerHTML = "0"  + " / " + <%=all%>;
+			document.getElementById('usse').innerHTML = "0"  + " / " + <%=all%> + " " + '(0%)';
 			}
 		);
 

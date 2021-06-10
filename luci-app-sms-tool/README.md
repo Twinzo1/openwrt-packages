@@ -12,7 +12,7 @@ Luci-app-sms-tool jest prostym interfejsem użytkownika dla projetu/aplikacji sm
 
 ### Preview and quick configuration (modem Quectel EM160R-GL) / Podgląd oraz szybka konfiguracja (modem Quectel EM160R-GL)
 
-![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/sms_config_1.8.5.gif)
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8F.gif)
 
 ## Installation / Instalacja
 ``` bash
@@ -20,35 +20,36 @@ Luci-app-sms-tool jest prostym interfejsem użytkownika dla projetu/aplikacji sm
 opkg install kmod-usb-serial kmod-usb-serial-option luci-compat
 
 #Install sms-tool.
-opkg install sms-tool_2021-02-16-55e5946f-1_XXXXXX.ipk
+opkg install sms-tool_2021-05-07-e9efc352-1_XXXXXX.ipk
 
 #Install gui.
-opkg install luci-app-sms-tool_1.8.7_all.ipk
+opkg install luci-app-sms-tool_1.8.8_all.ipk
 ```
 
 ## Screenshots / Zrzuty ekranu
 
 - "Received Messages" window / Okno odebranych wiadomości:
 
-![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.5PLreadsms.png)
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLreadsms.png)
 
 - "Sending Message" window / Okno wysyłania wiadomości:
 
-![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.5PLsendsms.png)
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLsendsms.png)
 
-- "USSD" window / Okno kodów USSD:
+- "USSD Codes" window / Okno kodów USSD:
 
-![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.5PLussdb.png)
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLussd.png)
+
+- "AT Commands" window / Okno poleceń AT:
+
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLatcommandz.png)
 
 - "Configuration" window / Okno konfiguracji:
 
-![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.5PLsmsconfig.png)
-![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.5PLsmsconfig2.png)
-![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.5PLsmsconfig3.png)
-
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLsmsconfig.png)
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLsmsconfig%20(1).png)
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLsmsconfig%20(2).png)
+![](https://raw.githubusercontent.com/4IceG/Personal_data/master/zrzuty/1.8.8F/1.8.8FPLsmsconfig%20(3).png)
 
 ## Thanks to / Podziękowania
-- [luci-app-smstool](https://github.com/lzto/luci-app-smstool)
-- [sms_tool](https://eko.one.pl/?p=openwrt-sms_tool)
-- [koshev-msk](https://github.com/koshev-msk)
 - [eko.one.pl](https://eko.one.pl/forum/viewtopic.php?id=20096)
