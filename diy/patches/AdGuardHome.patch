@@ -9,3 +9,4 @@
  	done
  	uci delete dhcp.@dnsmasq[0].resolvfile 2>/dev/null
  	uci set dhcp.@dnsmasq[0].noresolv=1
+
