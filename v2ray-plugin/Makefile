@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-plugin
-PKG_VERSION:=4.43.0
+PKG_VERSION:=4.44.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -40,7 +40,7 @@ config V2RAY_PLUGIN_COMPRESS_GOPROXY
 config V2RAY_PLUGIN_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
-	default y
+	default n
 endef
 
 ifeq ($(CONFIG_V2RAY_PLUGIN_COMPRESS_GOPROXY),y)
