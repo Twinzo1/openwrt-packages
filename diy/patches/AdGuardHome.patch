@@ -74,3 +74,21 @@
  https://static.adguard.com/adguardhome/release/AdGuardHome_linux_${Arch}.tar.gz
 -#https://static.adguard.com/adguardhome/beta/AdGuardHome_linux_${Arch}.tar.gz
 \ No newline at end of file
+
+--- a/luci-app-adguardhome/luasrc/view/AdGuardHome/log.htm
++++ b/luci-app-adguardhome/luasrc/view/AdGuardHome/log.htm
+@@ -83,12 +83,13 @@
+ 		if (x.responseText && lv) {
+ 			if (isutc2local)
+ 			{
+-				var lines=line_tolocal(x.responseText);
++				var lines=line_toUTC(x.responseText);
+ 				if (islogreverse){
+ 					lv.innerHTML = lines.reverse().join('\n')+lv.innerHTML;
+ 				}else{
+ 					lv.innerHTML += lines.join('\n');
+ 				}
++			lv.innerHTML=line_tolocal(lv.innerHTML).join('\n');
+ 			}else{
+ 				if (islogreverse){
+ 					lv.innerHTML = x.responseText.split('\n').reverse().join('\n')+lv.innerHTML;
