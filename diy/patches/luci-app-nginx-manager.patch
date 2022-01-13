@@ -1,33 +1,26 @@
---- a/luci-app-nginx-manager/luasrc/model/cbi/nginx-manager.lua
-+++ b/luci-app-nginx-manager/luasrc/model/cbi/nginx-manager.lua
-@@ -40,4 +40,27 @@ end
- function file.write(self, section, value)
- 	sync_value_to_file(value, self.map:get(section, "filepath"))
- end
-+
-+s = m:section(SimpleSection, translate("NGINX配置"),translate("本页是配置/etc/config/nginx, 应用保存后自动重启生效."))
-+s.anonymous=true
-+if nixio.fs.access("/etc/config/nginx")then
-+conf=s:option(Value,"nginxconf",nil,translate("开头的数字符号（＃）被视为注释。"))
-+conf.template="cbi/tvalue"
-+conf.rows=20
-+conf.wrap="off"
-+conf.cfgvalue=function(t,t)
-+return fs.readfile("/etc/config/nginx")or""
-+end
-+conf.write=function(a,a,t)
-+if t then
-+t=t:gsub("\r\n?","\n")
-+fs.writefile("/tmp/nginx",t)
-+if(luci.sys.call("cmp -s /tmp/nginx /etc/config/nginx")==1)then
-+fs.writefile("/etc/config/nginx",t)
-+luci.sys.call("/etc/init.d/nginx restart >/dev/null")
-+end
-+fs.remove("/tmp/nginx")
-+end
-+end
-+end
- return m
+--- a/luci-app-nginx-manager/Makefile
++++ b/luci-app-nginx-manager/Makefile
+@@ -6,7 +6,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=LuCI support for NginxManager From sundaqiang
+-LUCI_DEPENDS:=+luci-nginx +luci-ssl-nginx +luci-ssl-openssl
++LUCI_DEPENDS:=+luci-ssl-nginx
+ LUCI_PKGARCH:=all
+ PKG_VERSION:=1.0
+ PKG_RELEASE:=20211030
+
+--- a/luci-app-nginx-manager/luasrc/controller/nginx-manager.lua
++++ b/luci-app-nginx-manager/luasrc/controller/nginx-manager.lua
+@@ -14,6 +14,8 @@ function index()
+     end
+     nixio.fs.writefile("/etc/config/nginx-manager", "")
+     x = luci.model.uci.cursor()
++    x:set("nginx-manager", "config", "nginx")
++    x:set("nginx-manager", "config", "name", "config")
+     x:set("nginx-manager", "main", "nginx")
+     x:set("nginx-manager", "main", "name", "main")
+     x:set("nginx-manager", "main", "filepath", "/etc/nginx/nginx.conf")
 
 --- a/luci-app-nginx-manager/luasrc/view/nginx-manager/index.htm
 +++ b/luci-app-nginx-manager/luasrc/view/nginx-manager/index.htm
@@ -41,3 +34,13 @@
  		<fieldset class="cbi-section-node<% if self.tabs then %> cbi-section-node-tabbed<% end %>" id="cbi-<%=self.config%>-<%=section%>" style="border-bottom: 1px solid #ddd;border-radius: 0px">
  			<%+cbi/ucisection%>
  		</fieldset>
+
+--- a/luci-app-nginx-manager/luasrc/model/cbi/nginx-manager.lua
++++ b/luci-app-nginx-manager/luasrc/model/cbi/nginx-manager.lua
+@@ -1,5 +1,5 @@
+ local fs = require "nixio.fs"
+-local m = Map("nginx-manager",translate("Nginx Manager"), translate("A simple Nginx manager") .. [[<br /><br /><a href="https://github.com/sundaqiang/openwrt-packages" target="_blank">Powered by sundaqiang</a>]])
++local m = Map("nginx-manager",translate("Nginx Manager"), translate("A simple Nginx manager") .. [[<br /><a href="https://github.com/sundaqiang/openwrt-packages" target="_blank">Powered by sundaqiang</a>]])
+ s = m:section(TypedSection, "nginx", translate("Web site list"))
+ s.template = "nginx-manager/index"
+ s.addremove = true
